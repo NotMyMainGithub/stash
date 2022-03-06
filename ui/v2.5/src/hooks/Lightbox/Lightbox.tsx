@@ -25,6 +25,7 @@ import {
   mutateImageIncrementO,
   mutateImageDecrementO,
   mutateImageResetO,
+  useConfigureInterface,
 } from "src/core/StashService";
 import * as GQL from "src/core/generated-graphql";
 
@@ -46,6 +47,12 @@ const CLASSNAME_NAVBUTTON = `${CLASSNAME}-navbutton`;
 const CLASSNAME_NAV = `${CLASSNAME}-nav`;
 const CLASSNAME_NAVIMAGE = `${CLASSNAME_NAV}-image`;
 const CLASSNAME_NAVSELECTED = `${CLASSNAME_NAV}-selected`;
+
+const DEFAULT_LIGHTBOX_ZOOM = 1.0;
+const DEFAULT_LIGHTBOX_SCALE_UP = true;
+const DEFAULT_LIGHTBOX_DISPLAY_MODE = "FIT_XY";
+const DEFAULT_LIGHTBOX_SCROLL_MODE = "ZOOM";
+const DEFAULT_LIGHTBOX_RESET_ZOOM_ON_NAV = true;
 
 const DEFAULT_SLIDESHOW_DELAY = 5000;
 const SECONDS_TO_MS = 1000;
@@ -97,15 +104,6 @@ export const LightboxComponent: React.FC<IProps> = ({
 
   const oldImages = useRef<ILightboxImage[]>([]);
 
-  const [displayMode, setDisplayMode] = useState(DisplayMode.FIT_XY);
-  const oldDisplayMode = useRef(displayMode);
-
-  const [scaleUp, setScaleUp] = useState(false);
-  const [scrollMode, setScrollMode] = useState(ScrollMode.ZOOM);
-  const [resetZoomOnNav, setResetZoomOnNav] = useState(true);
-  const [zoom, setZoom] = useState(1);
-  const [resetPosition, setResetPosition] = useState(false);
-
   const containerRef = useRef<HTMLDivElement | null>(null);
   const overlayTarget = useRef<HTMLButtonElement | null>(null);
   const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -122,6 +120,35 @@ export const LightboxComponent: React.FC<IProps> = ({
 
   const userSelectedSlideshowDelayOrDefault =
     config?.interface.slideshowDelay ?? DEFAULT_SLIDESHOW_DELAY;
+
+    
+  // const userSelectedLightboxSettingsOrDefault =
+    // config?.interface.lightboxSettings ?? DEFAULT_LIGHTBOX_SETTINGS;
+
+  const userSelectedLightboxScaleUpOrDefault =
+    config?.interface.lightboxScaleUp ?? DEFAULT_LIGHTBOX_SCALE_UP;
+
+  const userSelectedLightboxScrollModeOrDefault =
+    config?.interface.lightboxScrollMode ?? DEFAULT_LIGHTBOX_SCROLL_MODE;
+
+  const userSelectedLightboxResetZoomOnNavOrDefault =
+    config?.interface.lightboxResetZoomOnNav ?? DEFAULT_LIGHTBOX_RESET_ZOOM_ON_NAV;
+  
+  const userSelectedLightboxZoomOrDefault =
+    config?.interface.lightboxZoom ?? DEFAULT_LIGHTBOX_ZOOM;
+  
+  const userSelectedLightboxDisplayModeOrDefault =
+    (config?.interface.lightboxDisplayMode ?? DEFAULT_LIGHTBOX_DISPLAY_MODE);
+
+  const [scaleUp, setScaleUp] = useState(userSelectedLightboxScaleUpOrDefault);
+  const [scrollMode, setScrollMode] = useState(userSelectedLightboxScrollModeOrDefault);
+  const [resetZoomOnNav, setResetZoomOnNav] = useState(userSelectedLightboxResetZoomOnNavOrDefault);
+  const [zoom, setZoom] = useState(userSelectedLightboxZoomOrDefault);
+  const [resetPosition, setResetPosition] = useState(false);
+  const [rememberLightboxSettings, setRememberLightboxSettings] = useState(false);
+
+  const [displayMode, setDisplayMode] = useState(userSelectedLightboxDisplayModeOrDefault);
+  const oldDisplayMode = useRef(displayMode);
 
   // slideshowInterval is used for controlling the logic
   // displaySlideshowInterval is for display purposes only
@@ -154,6 +181,49 @@ export const LightboxComponent: React.FC<IProps> = ({
     setInstantTransition(true);
     disableInstantTransition();
   }, [disableInstantTransition]);
+
+  const [iface, setIface] = useState<GQL.ConfigInterfaceInput>({});
+  const [pendingInterface, setPendingInterface] = useState<
+    GQL.ConfigInterfaceInput | undefined
+  >();
+  const [updateInterfaceConfig] = useConfigureInterface();
+
+  useEffect(() => {
+    if (!rememberLightboxSettings) {
+      return;
+    }
+
+    const lightboxSettings: GQL.ConfigInterfaceInput = {
+      lightboxDisplayMode: displayMode,
+      lightboxResetZoomOnNav: resetZoomOnNav,
+      lightboxScrollMode: scrollMode,
+      lightboxScaleUp: scaleUp,
+      lightboxZoom: zoom
+    }
+
+    const updateLightboxSettings = async (input: GQL.ConfigInterfaceInput) => {
+      try {
+        // setUpdateSuccess(undefined);
+        await updateInterfaceConfig({
+          variables: {
+            input,
+          },
+        });
+  
+        setPendingInterface(undefined);
+        // onSuccess();
+      } catch (e) {
+        // setSaveError(e);
+      }  
+    }
+    
+    updateLightboxSettings(lightboxSettings);
+  }, [userSelectedSlideshowDelayOrDefault,
+      scrollMode,
+      zoom,
+      scaleUp,
+      resetZoomOnNav,
+      rememberLightboxSettings]);
 
   useEffect(() => {
     if (images.length < 2) return;
@@ -505,6 +575,20 @@ export const LightboxComponent: React.FC<IProps> = ({
           })}
         </Form.Text>
       </Form.Group>
+      <Form.Group>
+        <Form.Group controlId="rememberLightboxSettings" as={Row} className="mb-1">
+          <Col>
+            <Form.Check
+              type="checkbox"
+              label={intl.formatMessage({
+                id: "dialogs.lightbox.remember_lightbox_settings",
+              })}
+              checked={rememberLightboxSettings}
+              onChange={(v) => setRememberLightboxSettings(v.currentTarget.checked)}
+            />
+          </Col>
+        </Form.Group>
+      </Form.Group>
     </>
   );
 
@@ -678,9 +762,9 @@ export const LightboxComponent: React.FC<IProps> = ({
               {i >= currentIndex - 1 && i <= currentIndex + 1 ? (
                 <LightboxImage
                   src={image.paths.image ?? ""}
-                  displayMode={displayMode}
+                  displayMode={displayMode as DisplayMode}
                   scaleUp={scaleUp}
-                  scrollMode={scrollMode}
+                  scrollMode={scrollMode as ScrollMode}
                   onLeft={handleLeft}
                   onRight={handleRight}
                   zoom={i === currentIndex ? zoom : 1}

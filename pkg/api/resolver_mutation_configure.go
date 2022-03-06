@@ -315,6 +315,22 @@ func (r *mutationResolver) ConfigureInterface(ctx context.Context, input models.
 		c.Set(config.Language, *input.Language)
 	}
 
+	setBool(config.LightboxScaleUp, input.LightboxScaleUp)
+
+	if input.LightboxScrollMode != nil {
+		c.Set(config.LightboxScrollMode, *input.LightboxScrollMode)
+	}
+
+	setBool(config.LightboxResetZoomOnNav, input.LightboxResetZoomOnNav)
+
+	if input.LightboxZoom != nil {
+		c.Set(config.LightboxZoom, *input.LightboxZoom)
+	}
+
+	if input.LightboxDisplayMode != nil {
+		c.Set(config.LightboxDisplayMode, *input.LightboxDisplayMode)
+	}
+
 	if input.SlideshowDelay != nil {
 		c.Set(config.SlideshowDelay, *input.SlideshowDelay)
 	}

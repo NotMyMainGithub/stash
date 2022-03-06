@@ -196,6 +196,63 @@ export const SettingsInterfacePanel: React.FC = () => {
       </SettingSection>
 
       <SettingSection headingID="config.ui.images.heading">
+        <BooleanSetting
+          id="lightbox-scale-up"
+          headingID="config.ui.lightbox_scale_up.heading"
+          subHeadingID="config.ui.lightbox_scale_up.description"
+          checked={iface.lightboxScaleUp ?? undefined}
+          onChange={(v) => saveInterface({ lightboxScaleUp: v })}
+        />
+        <SelectSetting
+          id="lightbox-display-mode"
+          headingID="config.ui.lightbox_display_mode.heading"
+          subHeadingID="config.ui.lightbox_display_mode.description"
+          value={iface.lightboxDisplayMode ?? undefined}
+          onChange={(v) => saveInterface({ lightboxDisplayMode: v })}
+        >
+          <option value="FIT_X">
+            {intl.formatMessage({ id: "config.ui.lightbox_display_mode.options.fit_horizontally" })}
+          </option>
+          <option value="FIT_XY">
+            {intl.formatMessage({
+              id: "config.ui.lightbox_display_mode.options.fit_to_screen",
+            })}
+          </option>
+          <option value="ORIGINAL">
+            {intl.formatMessage({
+              id: "config.ui.lightbox_display_mode.options.original",
+            })}
+          </option>
+        </SelectSetting>
+        <BooleanSetting
+          id="lightbox-reset-zoom-on-nav"
+          headingID="config.ui.lightbox_reset_zoom_on_nav.heading"
+          subHeadingID="config.ui.lightbox_reset_zoom_on_nav.description"
+          checked={iface.lightboxResetZoomOnNav ?? undefined}
+          onChange={(v) => saveInterface({ lightboxResetZoomOnNav: v })}
+        />
+        <NumberSetting
+          headingID="config.ui.lightbox_zoom.heading"
+          subHeadingID="config.ui.lightbox_zoom.description"
+          value={iface.lightboxZoom ?? undefined}
+          onChange={(v) => saveInterface({ lightboxZoom: v })}
+        />
+        <SelectSetting
+          id="lightbox-scroll-mode"
+          headingID="config.ui.lightbox_scroll_mode.heading"
+          subHeadingID="config.ui.lightbox_scroll_mode.description"
+          value={iface.lightboxScrollMode ?? undefined}
+          onChange={(v) => saveInterface({ lightboxScrollMode: v })}
+        >
+          <option value="ZOOM">
+            {intl.formatMessage({ id: "config.ui.lightbox_scroll_mode.options.zoom" })}
+          </option>
+          <option value="PAN_Y">
+            {intl.formatMessage({
+              id: "config.ui.lightbox_scroll_mode.options.pan_y",
+            })}
+          </option>
+        </SelectSetting>
         <NumberSetting
           headingID="config.ui.slideshow_delay.heading"
           subHeadingID="config.ui.slideshow_delay.description"

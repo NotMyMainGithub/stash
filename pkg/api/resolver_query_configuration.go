@@ -121,6 +121,11 @@ func makeConfigInterfaceResult() *models.ConfigInterfaceResult {
 	css := config.GetCSS()
 	cssEnabled := config.GetCSSEnabled()
 	language := config.GetLanguage()
+	lightboxScaleUp := config.GetLightboxScaleUp()
+	lightboxScrollMode := config.GetLightboxScrollMode()
+	lightboxResetZoomOnNav := config.GetLightboxResetZoomOnNav()
+	lightboxZoom := config.GetLightboxZoom()
+	lightboxDisplayMode := config.GetLightboxDisplayMode()
 	slideshowDelay := config.GetSlideshowDelay()
 	handyKey := config.GetHandyKey()
 	scriptOffset := config.GetFunscriptOffset()
@@ -144,6 +149,11 @@ func makeConfigInterfaceResult() *models.ConfigInterfaceResult {
 		CSS:                          &css,
 		CSSEnabled:                   &cssEnabled,
 		Language:                     &language,
+		LightboxScaleUp:              &lightboxScaleUp,
+		LightboxScrollMode:           &lightboxScrollMode,
+		LightboxResetZoomOnNav:       &lightboxResetZoomOnNav,
+		LightboxZoom:                 &lightboxZoom,
+		LightboxDisplayMode:          &lightboxDisplayMode,
 		SlideshowDelay:               &slideshowDelay,
 
 		// FIXME - see above

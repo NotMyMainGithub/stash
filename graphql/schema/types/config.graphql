@@ -230,6 +230,17 @@ input ConfigInterfaceInput {
   """Interface language"""
   language: String
   
+  """Scale up to fit"""
+  lightboxScaleUp: Boolean
+  """Scroll Mode"""
+  lightboxScrollMode: String
+  """Reset zoom level when changing image"""
+  lightboxResetZoomOnNav: Boolean
+  """Default Zoom Level"""
+  lightboxZoom: Float
+  """Display Mode"""
+  lightboxDisplayMode: String
+  
   """Slideshow Delay"""
   slideshowDelay: Int
   
@@ -290,6 +301,17 @@ type ConfigInterfaceResult {
   """Interface language"""
   language: String
 
+  """Scale up to fit"""
+  lightboxScaleUp: Boolean
+  """Scroll Mode"""
+  lightboxScrollMode: String
+  """Reset zoom level when changing image"""
+  lightboxResetZoomOnNav: Boolean
+  """Default Zoom Level"""
+  lightboxZoom: Float
+  """Display Mode"""
+  lightboxDisplayMode: String
+  
   """Slideshow Delay"""
   slideshowDelay: Int
 

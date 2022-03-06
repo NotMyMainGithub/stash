@@ -141,8 +141,18 @@ const (
 	WallPlayback        = "wall_playback"
 	defaultWallPlayback = "video"
 
-	SlideshowDelay        = "slideshow_delay"
-	defaultSlideshowDelay = 5000
+	LightboxDisplayMode           = "lightbox_display_mode"
+	defaultLightboxDisplayMode    = "FIT_XY"
+	LightboxResetZoomOnNav        = "lightbox_reset_zoom_on_nav"
+	defaultLightboxResetZoomOnNav = true
+	LightboxScaleUp               = "lightbox_scale_up"
+	defaultLightboxScaleUp        = true
+	LightboxScrollMode            = "lighbox_scroll_mode"
+	defaultLightboxScrolLMode     = "ZOOM"
+	LightboxZoom                  = "lightbox_zoom"
+	defaultLightboxZoom           = float64(1)
+	SlideshowDelay                = "slideshow_delay"
+	defaultSlideshowDelay         = 5000
 
 	DisableDropdownCreatePerformer = "disable_dropdown_create.performer"
 	DisableDropdownCreateStudio    = "disable_dropdown_create.studio"
@@ -876,6 +886,53 @@ func (i *Instance) GetContinuePlaylistDefault() bool {
 
 func (i *Instance) GetShowStudioAsText() bool {
 	return i.getBool(ShowStudioAsText)
+}
+
+func (i *Instance) GetLightboxScaleUp() bool {
+	return i.getBoolDefault(LightboxScaleUp, defaultLightboxScaleUp)
+}
+
+func (i *Instance) GetLightboxScrollMode() string {
+	i.RLock()
+	defer i.RUnlock()
+
+	ret := defaultLightboxScrolLMode
+	v := i.viper(LightboxScrollMode)
+	if v.IsSet(LightboxScrollMode) {
+		ret = v.GetString(LightboxScrollMode)
+	}
+
+	return ret
+}
+
+func (i *Instance) GetLightboxResetZoomOnNav() bool {
+	return i.getBoolDefault(LightboxResetZoomOnNav, defaultLightboxResetZoomOnNav)
+}
+
+func (i *Instance) GetLightboxZoom() float64 {
+	i.RLock()
+	defer i.RUnlock()
+
+	ret := defaultLightboxZoom
+	v := i.viper(LightboxZoom)
+	if v.IsSet(LightboxZoom) {
+		ret = v.GetFloat64(LightboxZoom)
+	}
+
+	return ret
+}
+
+func (i *Instance) GetLightboxDisplayMode() string {
+	i.RLock()
+	defer i.RUnlock()
+
+	ret := defaultLightboxDisplayMode
+	v := i.viper(LightboxDisplayMode)
+	if v.IsSet(LightboxDisplayMode) {
+		ret = v.GetString(LightboxDisplayMode)
+	}
+
+	return ret
 }
 
 func (i *Instance) GetSlideshowDelay() int {
